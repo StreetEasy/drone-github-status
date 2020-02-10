@@ -1,0 +1,50 @@
+kind: pipeline
+name: images
+type: kubernetes
+
+steps:
+- name: build
+  image: zillownyc/drone-ecr:latest
+  privileged: true
+  pull: always
+  environment:
+    DOCKER_BUILDKIT: "1"
+  settings:
+    repo: 253773679067.dkr.ecr.us-east-1.amazonaws.com/drone-github-status
+    checksums:
+    - Dockerfile
+    tags:
+    - ${DRONE_COMMIT}
+    - latest
+
+trigger:
+  event:
+  - pull_request
+  - push
+  branch:
+  - master
+
+---
+workspace:
+  base: /go
+  path: /go/src/github.com/jmccann/drone-github-status
+
+kind: pipeline
+name: tests
+type: kubernetes
+
+steps:
+- name: test
+  image: golang:1.13
+  commands:
+  - go test -v -cover ./...
+
+trigger:
+  event:
+  - pull_request
+  - push
+  branch:
+  - master
+
+depends_on:
+- images
