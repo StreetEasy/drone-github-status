@@ -1,3 +1,26 @@
+workspace:
+  base: /go
+  path: /go/src/github.com/StreetEasy/drone-github-status/
+
+kind: pipeline
+name: tests
+type: kubernetes
+
+steps:
+- name: test
+  image: golang:1.13
+  commands:
+  - go test -v -cover ./...
+
+trigger:
+  event:
+  - pull_request
+  - push
+  branch:
+  - master
+
+---
+
 kind: pipeline
 name: images
 type: kubernetes
@@ -24,27 +47,5 @@ trigger:
   branch:
   - master
 
----
-workspace:
-  base: /go
-  path: /go/src/github.com/jmccann/drone-github-status
-
-kind: pipeline
-name: tests
-type: kubernetes
-
-steps:
-- name: test
-  image: golang:1.13
-  commands:
-  - go test -v -cover ./...
-
-trigger:
-  event:
-  - pull_request
-  - push
-  branch:
-  - master
-
 depends_on:
-- images
+- tests
