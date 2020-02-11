@@ -1,6 +1,6 @@
 workspace:
   base: /go
-  path: /go/src/github.com/StreetEasy/drone-github-status/
+  path: /go/src/github.com/jmccann/drone-github-status
 
 kind: pipeline
 name: tests
